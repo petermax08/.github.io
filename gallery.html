@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mijn persoonlijke pagina</title>
+<title>Fotomuur</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -21,48 +21,34 @@
     z-index: 10; font-size: 13px;
   }
   nav a { color: #1d1d1f; text-decoration: none; opacity: 0.8; }
-  nav a:hover { opacity: 1; }
-  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px 24px; }
-  .hero {
-    background: radial-gradient(circle at 30% 20%, #e0c3fc 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, #8ec5fc 0%, transparent 50%),
+  nav a:hover, nav a.active { opacity: 1; font-weight: 600; }
+  header {
+    padding: 140px 24px 60px; text-align: center;
+    background: radial-gradient(circle at 25% 20%, #ffd1dc 0%, transparent 50%),
+                radial-gradient(circle at 75% 60%, #8ec5fc 0%, transparent 50%),
                 #fbfbfd;
   }
-  h1 { font-size: clamp(48px, 9vw, 112px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+  h1 { font-size: clamp(48px, 9vw, 104px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
        background: linear-gradient(90deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  h2 { font-size: clamp(36px, 6vw, 72px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 24px; }
-  .tilt-wrap { perspective: 1000px; margin-bottom: 40px; }
-  .tilt-card {
-    position: relative; width: min(320px, 80vw); aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    transform-style: preserve-3d; transition: transform .15s ease-out, box-shadow .3s;
+  p.sub { font-size: clamp(18px, 2.6vw, 28px); color: #6e6e73; margin-top: 16px; font-weight: 500; }
+  .grid {
+    max-width: 1100px; margin: 0 auto; padding: 40px 24px 100px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;
   }
-  .tilt-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .tilt-card .shine {
-    position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.45), transparent 55%);
-    opacity: 0; transition: opacity .3s;
+  .grid img {
+    width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 24px; cursor: zoom-in;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s;
   }
-  .tilt-card:hover .shine { opacity: 1; }
-  p.sub { font-size: clamp(20px, 3vw, 32px); color: #6e6e73; margin-top: 20px; font-weight: 500; }
-  p.text { font-size: clamp(18px, 2vw, 24px); color: #424245; max-width: 700px; line-height: 1.6; }
-  .dark { background: #000; color: #f5f5f7; }
-  .dark p.text { color: #a1a1a6; }
-  .cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
-  .card {
-    background: #fff; color: #1d1d1f; border-radius: 28px; padding: 40px 32px; width: 280px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08); transition: transform .4s ease;
-  }
-  .card:hover { transform: translateY(-8px) scale(1.02); }
-  .card h3 { font-size: 24px; margin-bottom: 12px; }
-  .card p { color: #6e6e73; line-height: 1.5; }
-  .btn {
-    display: inline-block; margin-top: 32px; padding: 14px 32px; border-radius: 980px;
-    background: #0071e3; color: #fff; text-decoration: none; font-size: 17px; transition: background .3s;
-  }
-  .btn:hover { background: #0077ed; }
+  .grid img:hover { transform: scale(1.03); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(.2,.7,.2,1); }
   .reveal.show { opacity: 1; transform: none; }
+  #lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+    display: none; justify-content: center; align-items: center; z-index: 50; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 16px; }
   #music {
     position: fixed; right: 24px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%;
     border: none; cursor: pointer; font-size: 22px; z-index: 20;
@@ -71,20 +57,6 @@
   }
   #music:hover { transform: scale(1.1); }
   footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 32px; max-width: 760px; }
-  .tag {
-    padding: 16px 32px; border-radius: 980px; background: #fff; color: #1d1d1f; font-size: clamp(18px, 2vw, 22px);
-    font-weight: 500; box-shadow: 0 6px 24px rgba(0,0,0,0.08); transition: transform .3s, box-shadow .3s;
-  }
-  .tag:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.14); }
-  .cursor { display: inline-block; width: 4px; height: .9em; margin-left: 6px; background: #6e6e73; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-  #glow {
-    position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
-    border-radius: 50%; pointer-events: none; z-index: 5; opacity: 0; transition: opacity .6s;
-    background: radial-gradient(circle, rgba(142,92,255,0.22) 0%, rgba(47,168,255,0.10) 40%, transparent 70%);
-  }
-  @media (hover: none) { #glow { display: none; } }
   #themeBtn {
     position: fixed; top: 8px; right: 20px; width: 32px; height: 32px; border-radius: 50%;
     border: none; cursor: pointer; font-size: 16px; z-index: 15;
@@ -95,11 +67,9 @@
   html.night nav { background: rgba(0,0,0,0.72); }
   html.night nav a { color: #f5f5f7; }
   html.night h1 { background: linear-gradient(90deg, #f5f5f7, #a1a1a6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  html.night p.sub, html.night p.text { color: #a1a1a6; }
-  html.night .hero { background: radial-gradient(circle at 30% 20%, #3b2266 0%, transparent 50%), radial-gradient(circle at 70% 80%, #143a66 0%, transparent 50%), #000; }
-  html.night .dark { background: #111; }
-  html.night .tag { background: #1c1c1e; color: #f5f5f7; box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
-  html.night .cursor { background: #a1a1a6; }
+  html.night p.sub { color: #a1a1a6; }
+  html.night header { background: radial-gradient(circle at 25% 20%, #5a2a44 0%, transparent 50%), radial-gradient(circle at 75% 60%, #143a66 0%, transparent 50%), #000; }
+  html.night .grid img { box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
   html.night #music, html.night #themeBtn { background: rgba(60,60,67,0.7); color: #f5f5f7; }
   #lock {
     position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center;
@@ -157,61 +127,30 @@
   </div>
 </div>
 
-<div id="glow"></div>
 <button id="themeBtn" title="Donker / licht">&#9790;</button>
 
 <nav>
-  <a href="#top">Home</a>
-  <a href="#about">Over mij</a>
-  <a href="#skills">Mijn vaardigheden</a>
-  <a href="gallery.html">Fotomuur</a>
-  <a href="#contact">Contact</a>
+  <a href="index.html">Home</a>
+  <a href="index.html#about">Over mij</a>
+  <a href="gallery.html" class="active">Fotomuur</a>
+  <a href="index.html#contact">Contact</a>
 </nav>
 
-<section class="hero" id="top">
-  <h1 class="reveal"><span id="typed"></span><span class="cursor"></span></h1>
-  <p class="sub reveal">Fietser · Lezer · Reiziger</p>
-</section>
+<header>
+  <h1 class="reveal">Fotomuur</h1>
+  <p class="sub reveal">De momenten die ik wil bewaren</p>
+</header>
 
-<section id="about">
-  <div class="tilt-wrap reveal">
-    <div class="tilt-card" id="tilt">
-      <img src="photos/me.jpg" alt="Mijn foto">
-      <div class="shine"></div>
-    </div>
-  </div>
-  <h2 class="reveal">Over mij</h2>
-  <p class="text reveal">Ik ben Peter, een vrolijk en positief mens met een grote passie voor mijn werk. Hard werken schrikt me niet af, en ik leer graag nieuwe dingen. Buiten werk fiets ik, lees ik, reis ik en speel ik ukelele.</p>
-</section>
+<div class="grid">
+  <img class="reveal" src="photos/1.jpg" alt="Foto 1">
+  <img class="reveal" src="photos/2.jpg" alt="Foto 2">
+  <img class="reveal" src="photos/3.jpg" alt="Foto 3">
+  <img class="reveal" src="photos/4.jpg" alt="Foto 4">
+  <img class="reveal" src="photos/5.jpg" alt="Foto 5">
+  <img class="reveal" src="photos/6.jpg" alt="Foto 6">
+</div>
 
-<section class="dark" id="skills">
-  <h2 class="reveal">Waar ik goed in ben</h2>
-  <div class="cards">
-    <div class="card reveal"><h3>Windows Server</h3><p>Installatie, configuratie en beheer van Windows-servers en bedrijfsomgevingen.</p></div>
-    <div class="card reveal"><h3>Netwerkapparatuur</h3><p>Netwerken opzetten en storingen oplossen, met praktijkervaring op Cisco-switches en FortiGate-firewalls.</p></div>
-    <div class="card reveal"><h3>Reparatie &amp; onderhoud</h3><p>Computers repareren en apparatuur in topconditie houden.</p></div>
-    <div class="card reveal"><h3>Creatief maken</h3><p>Van spelconcept tot gedrukt object: game design en 3D-printen.</p></div>
-  </div>
-</section>
-
-<section id="hobbies">
-  <h2 class="reveal">Mijn hobby's</h2>
-  <p class="text reveal">Wat ik doe als ik niet achter de computer zit.</p>
-  <div class="tags">
-    <div class="tag reveal">&#128690; Fietsen</div>
-    <div class="tag reveal">&#127916; Films kijken</div>
-    <div class="tag reveal">&#127911; Muziek luisteren</div>
-    <div class="tag reveal">&#127928; Ukelele spelen</div>
-    <div class="tag reveal">&#128214; Boeken lezen</div>
-    <div class="tag reveal">&#9992;&#65039; Reizen</div>
-  </div>
-</section>
-
-<section id="contact">
-  <h2 class="reveal">Laten we praten</h2>
-  <p class="text reveal">Neem gerust contact met me op.</p>
-  <a class="btn reveal" href="mailto:your@email.com">Stuur me een e-mail</a>
-</section>
+<div id="lightbox"><img src="" alt=""></div>
 
 <footer>© 2026 Peter. Alle rechten voorbehouden.</footer>
 
@@ -242,36 +181,21 @@
     document.getElementById('pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
   })();
 
-  // Typemachine-effect voor de titel
-  (function () {
-    const text = 'Hallo, ik ben Peter.';
-    const el = document.getElementById('typed');
-    let i = 0;
-    function type() {
-      if (i <= text.length) {
-        el.textContent = text.slice(0, i);
-        i++;
-        setTimeout(type, 90 + Math.random() * 70);
-      }
-    }
-    setTimeout(type, 600);
-  })();
+  // Scroll-animatie
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Zachte gloed die de muis volgt (alleen op desktop)
-  (function () {
-    const g = document.getElementById('glow');
-    if (!g || !window.matchMedia('(hover: hover)').matches) return;
-    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
-    window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; g.style.opacity = 1; });
-    document.addEventListener('mouseleave', () => { g.style.opacity = 0; });
-    (function loop() {
-      x += (tx - x) * 0.12; y += (ty - y) * 0.12;
-      g.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-      requestAnimationFrame(loop);
-    })();
-  })();
+  // Klik om te vergroten
+  const lb = document.getElementById('lightbox');
+  const lbImg = lb.querySelector('img');
+  document.querySelectorAll('.grid img').forEach(img => {
+    img.addEventListener('click', () => { lbImg.src = img.src; lb.classList.add('open'); });
+  });
+  lb.addEventListener('click', () => lb.classList.remove('open'));
 
-  // Donker / licht thema (wordt onthouden)
+  // Donker / licht thema (wordt onthouden, gedeeld met de homepage)
   (function () {
     const root = document.documentElement, b = document.getElementById('themeBtn');
     function apply(n) { root.classList.toggle('night', n); b.textContent = n ? '☀' : '☾'; }
@@ -284,31 +208,12 @@
     });
   })();
 
-  // Scroll-animatie
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
-  }, { threshold: 0.2 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-  // 3D-kantelen van de foto
-  const tilt = document.getElementById('tilt');
-  if (tilt && window.matchMedia('(hover: hover)').matches) {
-    tilt.addEventListener('mousemove', (e) => {
-      const r = tilt.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width;
-      const y = (e.clientY - r.top) / r.height;
-      tilt.style.transform = 'rotateY(' + ((x - 0.5) * 20) + 'deg) rotateX(' + ((0.5 - y) * 20) + 'deg) scale(1.03)';
-      tilt.style.setProperty('--mx', (x * 100) + '%');
-      tilt.style.setProperty('--my', (y * 100) + '%');
-    });
-    tilt.addEventListener('mouseleave', () => {
-      tilt.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
-    });
-  }
-
-  // Muziekknop
+  // Muziekknop (onthoudt de afspeelpositie, zodat de muziek na een paginawissel doorgaat)
   const btn = document.getElementById('music');
   const bgm = document.getElementById('bgm');
+  const t = parseFloat(sessionStorage.getItem('bgmTime') || '0');
+  bgm.currentTime = t;
+  setInterval(() => sessionStorage.setItem('bgmTime', bgm.currentTime), 500);
   btn.addEventListener('click', () => {
     if (bgm.paused) { bgm.play(); btn.textContent = '❚❚'; }
     else { bgm.pause(); btn.textContent = '♪'; }
@@ -316,4 +221,4 @@
 </script>
 
 </body>
-</html>
+</html
