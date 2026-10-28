@@ -79,6 +79,28 @@
   .tag:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.14); }
   .cursor { display: inline-block; width: 4px; height: .9em; margin-left: 6px; background: #6e6e73; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
+  #glow {
+    position: fixed; left: 0; top: 0; width: 520px; height: 520px; margin: -260px 0 0 -260px;
+    border-radius: 50%; pointer-events: none; z-index: 5; opacity: 0; transition: opacity .6s;
+    background: radial-gradient(circle, rgba(142,92,255,0.22) 0%, rgba(47,168,255,0.10) 40%, transparent 70%);
+  }
+  @media (hover: none) { #glow { display: none; } }
+  #themeBtn {
+    position: fixed; top: 8px; right: 20px; width: 32px; height: 32px; border-radius: 50%;
+    border: none; cursor: pointer; font-size: 16px; z-index: 15;
+    background: rgba(0,0,0,0.06); color: #1d1d1f; transition: transform .3s, background .3s;
+  }
+  #themeBtn:hover { transform: scale(1.12); }
+  html.night body { background: #000; color: #f5f5f7; }
+  html.night nav { background: rgba(0,0,0,0.72); }
+  html.night nav a { color: #f5f5f7; }
+  html.night h1 { background: linear-gradient(90deg, #f5f5f7, #a1a1a6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  html.night p.sub, html.night p.text { color: #a1a1a6; }
+  html.night .hero { background: radial-gradient(circle at 30% 20%, #3b2266 0%, transparent 50%), radial-gradient(circle at 70% 80%, #143a66 0%, transparent 50%), #000; }
+  html.night .dark { background: #111; }
+  html.night .tag { background: #1c1c1e; color: #f5f5f7; box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+  html.night .cursor { background: #a1a1a6; }
+  html.night #music, html.night #themeBtn { background: rgba(60,60,67,0.7); color: #f5f5f7; }
   #lock {
     position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center;
     background: #0b0b14; overflow: hidden; padding: 24px;
@@ -135,6 +157,9 @@
   </div>
 </div>
 
+<div id="glow"></div>
+<button id="themeBtn" title="Donker / licht">&#9790;</button>
+
 <nav>
   <a href="#top">Home</a>
   <a href="#about">Over mij</a>
@@ -145,7 +170,7 @@
 
 <section class="hero" id="top">
   <h1 class="reveal"><span id="typed"></span><span class="cursor"></span></h1>
-  <p class="sub reveal">Ontwerper · Maker · Dromer</p>
+  <p class="sub reveal">Fietser · Lezer · Reiziger</p>
 </section>
 
 <section id="about">
@@ -230,6 +255,33 @@
       }
     }
     setTimeout(type, 600);
+  })();
+
+  // Zachte gloed die de muis volgt (alleen op desktop)
+  (function () {
+    const g = document.getElementById('glow');
+    if (!g || !window.matchMedia('(hover: hover)').matches) return;
+    let x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y;
+    window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; g.style.opacity = 1; });
+    document.addEventListener('mouseleave', () => { g.style.opacity = 0; });
+    (function loop() {
+      x += (tx - x) * 0.12; y += (ty - y) * 0.12;
+      g.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  // Donker / licht thema (wordt onthouden)
+  (function () {
+    const root = document.documentElement, b = document.getElementById('themeBtn');
+    function apply(n) { root.classList.toggle('night', n); b.textContent = n ? '☀' : '☾'; }
+    let saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) {}
+    apply(saved === 'night');
+    b.addEventListener('click', () => {
+      const n = !root.classList.contains('night'); apply(n);
+      try { localStorage.setItem('theme', n ? 'night' : 'light'); } catch (e) {}
+    });
   })();
 
   // Scroll-animatie
