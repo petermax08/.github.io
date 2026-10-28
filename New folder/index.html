@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mijn persoonlijke pagina</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+    background: #fbfbfd;
+    color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+  }
+  nav {
+    position: fixed; top: 0; width: 100%; height: 48px;
+    display: flex; justify-content: center; gap: 40px; align-items: center;
+    background: rgba(251,251,253,0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    z-index: 10; font-size: 13px;
+  }
+  nav a { color: #1d1d1f; text-decoration: none; opacity: 0.8; }
+  nav a:hover { opacity: 1; }
+  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 80px 24px; }
+  .hero {
+    background: radial-gradient(circle at 30% 20%, #e0c3fc 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, #8ec5fc 0%, transparent 50%),
+                #fbfbfd;
+  }
+  h1 { font-size: clamp(48px, 9vw, 112px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05;
+       background: linear-gradient(90deg, #1d1d1f, #6e6e73); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h2 { font-size: clamp(36px, 6vw, 72px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 24px; }
+  .tilt-wrap { perspective: 1000px; margin-bottom: 40px; }
+  .tilt-card {
+    position: relative; width: min(320px, 80vw); aspect-ratio: 4 / 5; border-radius: 32px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    transform-style: preserve-3d; transition: transform .15s ease-out, box-shadow .3s;
+  }
+  .tilt-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tilt-card .shine {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.45), transparent 55%);
+    opacity: 0; transition: opacity .3s;
+  }
+  .tilt-card:hover .shine { opacity: 1; }
+  p.sub { font-size: clamp(20px, 3vw, 32px); color: #6e6e73; margin-top: 20px; font-weight: 500; }
+  p.text { font-size: clamp(18px, 2vw, 24px); color: #424245; max-width: 700px; line-height: 1.6; }
+  .dark { background: #000; color: #f5f5f7; }
+  .dark p.text { color: #a1a1a6; }
+  .cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 40px; }
+  .card {
+    background: #fff; color: #1d1d1f; border-radius: 28px; padding: 40px 32px; width: 280px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08); transition: transform .4s ease;
+  }
+  .card:hover { transform: translateY(-8px) scale(1.02); }
+  .card h3 { font-size: 24px; margin-bottom: 12px; }
+  .card p { color: #6e6e73; line-height: 1.5; }
+  .btn {
+    display: inline-block; margin-top: 32px; padding: 14px 32px; border-radius: 980px;
+    background: #0071e3; color: #fff; text-decoration: none; font-size: 17px; transition: background .3s;
+  }
+  .btn:hover { background: #0077ed; }
+  .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(.2,.7,.2,1); }
+  .reveal.show { opacity: 1; transform: none; }
+  #music {
+    position: fixed; right: 24px; bottom: 24px; width: 56px; height: 56px; border-radius: 50%;
+    border: none; cursor: pointer; font-size: 22px; z-index: 20;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.15); transition: transform .3s;
+  }
+  #music:hover { transform: scale(1.1); }
+  footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
+  #lock {
+    position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center;
+    background: #0b0b14; overflow: hidden; padding: 24px;
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  #lock.done { opacity: 0; transform: scale(1.08); pointer-events: none; }
+  .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .75; will-change: transform; }
+  .orb.o1 { width: 46vmax; height: 46vmax; background: #8e5cff; top: -12vmax; left: -10vmax; animation: float1 14s ease-in-out infinite; }
+  .orb.o2 { width: 40vmax; height: 40vmax; background: #2fa8ff; bottom: -14vmax; right: -8vmax; animation: float2 17s ease-in-out infinite; }
+  .orb.o3 { width: 32vmax; height: 32vmax; background: #ff5fa2; top: 30%; left: 40%; animation: float3 19s ease-in-out infinite; }
+  @keyframes float1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(14vmax,10vmax) scale(1.15); } }
+  @keyframes float2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-16vmax,-8vmax) scale(1.2); } }
+  @keyframes float3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-10vmax,12vmax) scale(.85); } }
+  .lock-card {
+    position: relative; z-index: 2; width: min(380px, 100%); padding: 44px 32px; text-align: center;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 32px;
+    backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4); color: #fff;
+    animation: cardIn 1s cubic-bezier(.2,.7,.2,1) both;
+  }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(30px) scale(.96); } to { opacity: 1; transform: none; } }
+  .lock-card.shake { animation: shake .45s ease; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-12px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-8px); } 80% { transform: translateX(6px); } }
+  .lock-icon { font-size: 40px; margin-bottom: 12px; }
+  .lock-card h2 { font-size: 26px; margin-bottom: 24px; color: #fff; letter-spacing: -0.01em; }
+  .lock-card input {
+    width: 100%; padding: 15px 20px; font-size: 17px; border-radius: 980px; text-align: center; color: #fff;
+    background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.3); outline: none;
+    transition: box-shadow .3s, border-color .3s;
+  }
+  .lock-card input::placeholder { color: rgba(255,255,255,0.6); }
+  .lock-card input:focus { border-color: #fff; box-shadow: 0 0 0 4px rgba(255,255,255,0.18), 0 0 30px rgba(142,92,255,0.7); }
+  .lock-card button {
+    margin-top: 16px; width: 100%; padding: 14px; font-size: 17px; border: none; border-radius: 980px;
+    background: #fff; color: #1d1d1f; cursor: pointer; font-weight: 600; transition: transform .2s;
+  }
+  .lock-card button:hover { transform: scale(1.03); }
+  .lock-card .err { color: #ffb3b8; font-size: 14px; min-height: 20px; margin-top: 14px; }
+  body.locked > :not(#lock) { visibility: hidden; }
+</style>
+</head>
+<body class="locked">
+
+<div id="lock">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="lock-card" id="lockCard">
+    <div class="lock-icon">&#128274;</div>
+    <h2>Voer het wachtwoord in</h2>
+    <input type="password" id="pw" placeholder="Wachtwoord" autocomplete="off">
+    <button id="pwBtn">Openen</button>
+    <div class="err" id="pwErr"></div>
+  </div>
+</div>
+
+<nav>
+  <a href="#top">Home</a>
+  <a href="#about">Over mij</a>
+  <a href="#skills">Mijn vaardigheden</a>
+  <a href="gallery.html">Fotomuur</a>
+  <a href="#contact">Contact</a>
+</nav>
+
+<section class="hero" id="top">
+  <h1 class="reveal">Hallo, ik ben Peter.</h1>
+  <p class="sub reveal">Ontwerper · Maker · Dromer</p>
+</section>
+
+<section id="about">
+  <div class="tilt-wrap reveal">
+    <div class="tilt-card" id="tilt">
+      <img src="photos/me.jpg" alt="Mijn foto">
+      <div class="shine"></div>
+    </div>
+  </div>
+  <h2 class="reveal">Over mij</h2>
+  <p class="text reveal">Schrijf hier een korte introductie over jezelf. Waar kom je vandaan, waar ben je gek op, waar werk je aan? Houd het kort en krachtig, net als een tekst van Apple.</p>
+</section>
+
+<section class="dark" id="skills">
+  <h2 class="reveal">Waar ik goed in ben</h2>
+  <div class="cards">
+    <div class="card reveal"><h3>Ontwerp</h3><p>Ideeën omzetten in elegant, eenvoudig visueel werk.</p></div>
+    <div class="card reveal"><h3>Fotografie</h3><p>Met de camera de stille momenten van het leven vastleggen.</p></div>
+    <div class="card reveal"><h3>Schrijven</h3><p>Gedachten en gevoelens in woorden uitdrukken.</p></div>
+    <div class="card reveal"><h3>Schrijven</h3><p>Gedachten en gevoelens in woorden uitdrukken.</p></div>
+    <div class="card reveal"><h3>Schrijven</h3><p>Gedachten en gevoelens in woorden uitdrukken.</p></div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2 class="reveal">Laten we praten</h2>
+  <p class="text reveal">Neem gerust contact met me op.</p>
+  <a class="btn reveal" href="mailto:your@email.com">Stuur me een e-mail</a>
+</section>
+
+<footer>© 2026 Mijn naam. Alle rechten voorbehouden.</footer>
+
+<button id="music" title="Muziek afspelen">♪</button>
+<audio id="bgm" src="music.mp3" loop></audio>
+
+<script>
+  // Wachtwoordbeveiliging (eenvoudig, alleen om bezoekers even tegen te houden)
+  (function () {
+    const PASSWORD = 'RP2026';
+    const lock = document.getElementById('lock');
+    const card = document.getElementById('lockCard');
+    function open(animate) {
+      document.body.classList.remove('locked');
+      if (animate) { lock.classList.add('done'); setTimeout(() => { lock.style.display = 'none'; }, 800); }
+      else { lock.style.display = 'none'; }
+    }
+    if (sessionStorage.getItem('unlocked') === 'yes') { open(false); return; }
+    function check() {
+      if (document.getElementById('pw').value === PASSWORD) {
+        sessionStorage.setItem('unlocked', 'yes'); open(true);
+      } else {
+        document.getElementById('pwErr').textContent = 'Onjuist wachtwoord, probeer het opnieuw.';
+        card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+      }
+    }
+    document.getElementById('pwBtn').addEventListener('click', check);
+    document.getElementById('pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+  })();
+
+  // Scroll-animatie
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 3D-kantelen van de foto
+  const tilt = document.getElementById('tilt');
+  if (tilt && window.matchMedia('(hover: hover)').matches) {
+    tilt.addEventListener('mousemove', (e) => {
+      const r = tilt.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      tilt.style.transform = 'rotateY(' + ((x - 0.5) * 20) + 'deg) rotateX(' + ((0.5 - y) * 20) + 'deg) scale(1.03)';
+      tilt.style.setProperty('--mx', (x * 100) + '%');
+      tilt.style.setProperty('--my', (y * 100) + '%');
+    });
+    tilt.addEventListener('mouseleave', () => {
+      tilt.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+    });
+  }
+
+  // Muziekknop
+  const btn = document.getElementById('music');
+  const bgm = document.getElementById('bgm');
+  btn.addEventListener('click', () => {
+    if (bgm.paused) { bgm.play(); btn.textContent = '❚❚'; }
+    else { bgm.pause(); btn.textContent = '♪'; }
+  });
+</script>
+
+</body>
+</html>
