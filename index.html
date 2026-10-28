@@ -71,6 +71,12 @@
   }
   #music:hover { transform: scale(1.1); }
   footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 32px; max-width: 760px; }
+  .tag {
+    padding: 16px 32px; border-radius: 980px; background: #fff; color: #1d1d1f; font-size: clamp(18px, 2vw, 22px);
+    font-weight: 500; box-shadow: 0 6px 24px rgba(0,0,0,0.08); transition: transform .3s, box-shadow .3s;
+  }
+  .tag:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 12px 32px rgba(0,0,0,0.14); }
   .cursor { display: inline-block; width: 4px; height: .9em; margin-left: 6px; background: #6e6e73; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
   #lock {
@@ -150,24 +156,39 @@
     </div>
   </div>
   <h2 class="reveal">Over mij</h2>
-  <p class="text reveal">Schrijf hier een korte introductie over jezelf. Waar kom je vandaan, waar ben je gek op, waar werk je aan? Houd het kort en krachtig, net als een tekst van Apple.</p>
+  <p class="text reveal">Ik ben Peter, een vrolijk en positief mens met een grote passie voor mijn werk. Hard werken schrikt me niet af, en ik leer graag nieuwe dingen. Buiten werk fiets ik, lees ik, reis ik en speel ik ukelele.</p>
 </section>
 
 <section class="dark" id="skills">
   <h2 class="reveal">Waar ik goed in ben</h2>
   <div class="cards">
-    <div class="card reveal"><h3>Ontwerp</h3><p>Ideeën omzetten in elegant, eenvoudig visueel werk.</p></div>
-    <div class="card reveal"><h3>Fotografie</h3><p>Met de camera de stille momenten van het leven vastleggen.</p></div>
-    <div class="card reveal"><h3>Schrijven</h3><p>Gedachten en gevoelens in woorden uitdrukken.</p></div>
+    <div class="card reveal"><h3>Windows Server</h3><p>Installatie, configuratie en beheer van Windows-servers en bedrijfsomgevingen.</p></div>
+    <div class="card reveal"><h3>Netwerkapparatuur</h3><p>Netwerken opzetten en storingen oplossen, met praktijkervaring op Cisco-switches en FortiGate-firewalls.</p></div>
+    <div class="card reveal"><h3>Reparatie &amp; onderhoud</h3><p>Computers repareren en apparatuur in topconditie houden.</p></div>
+    <div class="card reveal"><h3>Creatief maken</h3><p>Van spelconcept tot gedrukt object: game design en 3D-printen.</p></div>
   </div>
 </section>
+
+<section id="hobbies">
+  <h2 class="reveal">Mijn hobby's</h2>
+  <p class="text reveal">Wat ik doe als ik niet achter de computer zit.</p>
+  <div class="tags">
+    <div class="tag reveal">&#128690; Fietsen</div>
+    <div class="tag reveal">&#127916; Films kijken</div>
+    <div class="tag reveal">&#127911; Muziek luisteren</div>
+    <div class="tag reveal">&#127928; Ukelele spelen</div>
+    <div class="tag reveal">&#128214; Boeken lezen</div>
+    <div class="tag reveal">&#9992;&#65039; Reizen</div>
+  </div>
+</section>
+
 <section id="contact">
   <h2 class="reveal">Laten we praten</h2>
   <p class="text reveal">Neem gerust contact met me op.</p>
   <a class="btn reveal" href="mailto:your@email.com">Stuur me een e-mail</a>
 </section>
 
-<footer>© 2026 Mijn naam. Alle rechten voorbehouden.</footer>
+<footer>© 2026 Peter. Alle rechten voorbehouden.</footer>
 
 <button id="music" title="Muziek afspelen">♪</button>
 <audio id="bgm" src="music.mp3" loop></audio>
@@ -198,7 +219,7 @@
 
   // Typemachine-effect voor de titel
   (function () {
-    const text = 'Hallo, ik ben Jan.';
+    const text = 'Hallo, ik ben Peter.';
     const el = document.getElementById('typed');
     let i = 0;
     function type() {
