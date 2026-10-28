@@ -73,22 +73,6 @@
   footer { padding: 40px; text-align: center; color: #86868b; font-size: 13px; }
   .cursor { display: inline-block; width: 4px; height: .9em; margin-left: 6px; background: #6e6e73; vertical-align: -0.08em; animation: blink 1s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
-  .game { background: linear-gradient(135deg, #f5f3ff 0%, #eaf4ff 100%); }
-  .game-info { margin: 20px 0 8px; font-size: 17px; color: #6e6e73; display: flex; gap: 28px; justify-content: center; }
-  .game-info b { color: #1d1d1f; font-variant-numeric: tabular-nums; }
-  .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; width: min(520px, 90vw); margin: 24px auto 0; }
-  .mcard { aspect-ratio: 1 / 1; perspective: 800px; cursor: pointer; }
-  .mcard-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
-  .mcard.flipped .mcard-inner, .mcard.matched .mcard-inner { transform: rotateY(180deg); }
-  .mcard .face { position: absolute; inset: 0; border-radius: 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-  .mcard .back { background: linear-gradient(135deg, #8e5cff, #2fa8ff); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.9); font-size: 30px; }
-  .mcard .front { transform: rotateY(180deg); background: #fff; }
-  .mcard .front img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .mcard.matched .front { box-shadow: 0 0 0 4px #34c759, 0 8px 24px rgba(0,0,0,0.12); }
-  .win { margin-top: 28px; font-size: 24px; font-weight: 600; min-height: 36px; opacity: 0; transform: translateY(10px); transition: all .6s; }
-  .win.show { opacity: 1; transform: none; }
-  .btn-again { margin-top: 16px; padding: 10px 26px; font-size: 15px; border: none; border-radius: 980px; background: #1d1d1f; color: #fff; cursor: pointer; transition: transform .2s; }
-  .btn-again:hover { transform: scale(1.05); }
   #lock {
     position: fixed; inset: 0; z-index: 100; display: flex; justify-content: center; align-items: center;
     background: #0b0b14; overflow: hidden; padding: 24px;
@@ -177,16 +161,6 @@
     <div class="card reveal"><h3>Schrijven</h3><p>Gedachten en gevoelens in woorden uitdrukken.</p></div>
   </div>
 </section>
-
-<section class="game" id="game">
-  <h2 class="reveal">Speel een spelletje</h2>
-  <p class="text reveal">Vind alle paren. Hoe minder zetten, hoe beter.</p>
-  <div class="game-info reveal"><span>Zetten: <b id="moves">0</b></span><span>Paren: <b id="pairs">0</b> / 4</span></div>
-  <div class="board" id="board"></div>
-  <div class="win" id="win"></div>
-  <button class="btn-again" id="again">Opnieuw spelen</button>
-</section>
-
 <section id="contact">
   <h2 class="reveal">Laten we praten</h2>
   <p class="text reveal">Neem gerust contact met me op.</p>
@@ -235,67 +209,6 @@
       }
     }
     setTimeout(type, 600);
-  })();
-
-  // Geheugenspel (4 paren, gebruikt foto 1 t/m 4)
-  (function () {
-    const board = document.getElementById('board');
-    const movesEl = document.getElementById('moves');
-    const pairsEl = document.getElementById('pairs');
-    const winEl = document.getElementById('win');
-    let first = null, lockBoard = false, moves = 0, pairs = 0;
-
-    function shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
-
-    function start() {
-      board.innerHTML = '';
-      first = null; lockBoard = false; moves = 0; pairs = 0;
-      movesEl.textContent = 0; pairsEl.textContent = 0;
-      winEl.classList.remove('show'); winEl.textContent = '';
-      const ids = shuffle([1, 2, 3, 4, 1, 2, 3, 4]);
-      ids.forEach((n) => {
-        const c = document.createElement('div');
-        c.className = 'mcard';
-        c.dataset.id = n;
-        c.innerHTML = '<div class="mcard-inner"><div class="face back">&#10022;</div><div class="face front"><img src="photos/' + n + '.jpg" alt="Foto ' + n + '"></div></div>';
-        c.addEventListener('click', () => flip(c));
-        board.appendChild(c);
-      });
-    }
-
-    function flip(c) {
-      if (lockBoard || c.classList.contains('flipped') || c.classList.contains('matched')) return;
-      c.classList.add('flipped');
-      if (!first) { first = c; return; }
-      moves++; movesEl.textContent = moves;
-      if (first.dataset.id === c.dataset.id) {
-        first.classList.add('matched'); c.classList.add('matched');
-        pairs++; pairsEl.textContent = pairs;
-        first = null;
-        if (pairs === 4) {
-          setTimeout(() => {
-            winEl.textContent = 'Goed gedaan! Gelukt in ' + moves + ' zetten.';
-            winEl.classList.add('show');
-          }, 500);
-        }
-      } else {
-        lockBoard = true;
-        const a = first; first = null;
-        setTimeout(() => {
-          a.classList.remove('flipped'); c.classList.remove('flipped');
-          lockBoard = false;
-        }, 900);
-      }
-    }
-
-    document.getElementById('again').addEventListener('click', start);
-    start();
   })();
 
   // Scroll-animatie
