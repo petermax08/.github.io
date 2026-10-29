@@ -43,6 +43,15 @@
   .grid img:hover { transform: scale(1.03); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
   .reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(.2,.7,.2,1); }
   .reveal.show { opacity: 1; transform: none; }
+  h3.vtitle { text-align: center; font-size: clamp(28px, 4vw, 48px); font-weight: 700; letter-spacing: -0.02em; margin-top: 20px; }
+  .videos {
+    max-width: 1100px; margin: 0 auto; padding: 32px 24px 100px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
+  }
+  .videos video {
+    width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 24px; background: #000;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+  }
   #lightbox {
     position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
     display: none; justify-content: center; align-items: center; z-index: 50; cursor: zoom-out;
@@ -150,6 +159,14 @@
   <img class="reveal" src="photos/6.jpg" alt="Foto 6">
 </div>
 
+<h3 class="vtitle reveal">Video's</h3>
+<div class="videos">
+  <video class="reveal" src="videos/video1.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video2.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video3.mp4" controls preload="metadata" playsinline></video>
+  <video class="reveal" src="videos/video4.mp4" controls preload="metadata" playsinline></video>
+</div>
+
 <div id="lightbox"><img src="" alt=""></div>
 
 <footer>© 2026 Peter. Alle rechten voorbehouden.</footer>
@@ -195,6 +212,16 @@
   });
   lb.addEventListener('click', () => lb.classList.remove('open'));
 
+  // Er speelt maar één video tegelijk, en de achtergrondmuziek pauzeert tijdens een video
+  const vids = document.querySelectorAll('.videos video');
+  vids.forEach(v => {
+    v.addEventListener('play', () => {
+      vids.forEach(o => { if (o !== v) o.pause(); });
+      const m = document.getElementById('bgm'), mb = document.getElementById('music');
+      if (m && !m.paused) { m.pause(); mb.textContent = '♪'; }
+    });
+  });
+
   // Donker / licht thema (wordt onthouden, gedeeld met de homepage)
   (function () {
     const root = document.documentElement, b = document.getElementById('themeBtn');
@@ -221,4 +248,4 @@
 </script>
 
 </body>
-</html
+</html>
